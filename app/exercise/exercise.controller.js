@@ -1,6 +1,11 @@
 import asyncHandler from 'express-async-handler'
 import { prisma } from '../../prisma.js'
 
+export const getExercise = asyncHandler(async (req, res) => {
+  const exercise = await prisma.exercise.findMany({ orderBy: { createdAt: 'desc' } })
+  res.json({ items: exercise })
+})
+
 export const createExercise = asyncHandler(async (req, res) => {
   const { name, times, iconPath } = req.body
   const exercise = await prisma.exercise.create({ data: { name, times, iconPath } })

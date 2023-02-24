@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import authRoutes from './app/auth/auth.routes.js'
 import userRoutes from './app/user/user.routes.js'
 import exerciseRoutes from './app/exercise/exercise.routes.js'
+import workoutsRoutes from './app/workout/workout.routes.js'
 import { prisma } from './prisma.js'
 import { errorHandler, notFound } from './middleware/errors.js'
 
@@ -23,6 +24,7 @@ async function main() {
   app.use('/api/auth', authRoutes)
   app.use('/api/user', userRoutes)
   app.use('/api/exercise', exerciseRoutes)
+  app.use('/api/workouts', workoutsRoutes)
 
   // Middleware для проверки
   app.use(notFound)
