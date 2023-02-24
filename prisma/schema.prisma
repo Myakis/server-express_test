@@ -16,7 +16,26 @@ model User {
   updateAt  DateTime @updatedAt() @map("update_at")
 
   email    String   @unique
-  name     String   
+  name     String
   password String
   images   String[]
+}
+model Workout {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt() @map("update_at")
+
+  exercises Exercise[]
+}
+
+model Exercise {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt() @map("update_at")
+
+  name     String
+  times    String
+  iconPath String @map("icon_path")
+
+  workouts Workout[]
 }
