@@ -16,7 +16,7 @@ dotenv.config()
 async function main() {
   if (process.env.NODE_ENV === 'development') app.use(morgan('dev'))
   app.use(express.json())
-
+  console.log('тест');
   const __dirname = path.resolve()
   app.use('/uploads', express.static(path.join(__dirname, '/uploads/')))
 
