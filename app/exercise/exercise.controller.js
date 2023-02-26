@@ -24,7 +24,7 @@ export const updateExercise = asyncHandler(async (req, res) => {
 export const deleteExercise = asyncHandler(async (req, res) => {
   const { id } = req.params
 
-  const exercise = await prisma.exercise.delete({ where: { id: Number(id) } })
+  await prisma.exercise.delete({ where: { id: Number(id) } })
   const exercises = await prisma.exercise.findMany()
   res.json({ items: exercises, message: `Упражнение с id ${id} успешно удалено` })
 })

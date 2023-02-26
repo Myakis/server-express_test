@@ -14,7 +14,7 @@ export const protect = asyncHandler(async (req, res, next) => {
       select: UserField,
     })
     if (userFound) {
-      res.user = userFound
+      req.user = userFound
       next()
     } else {
       res.status(401)
