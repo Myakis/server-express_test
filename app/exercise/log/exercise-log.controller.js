@@ -2,10 +2,10 @@ import asyncHandler from 'express-async-handler'
 import { prisma } from '../../../prisma.js'
 
 export const createExerciseLog = asyncHandler(async (req, res) => {
-  const { exerciseId } = req.params
+  const exerciseId = +req.params.id
   const exercise = await prisma.exercise.findUnique({
     where: {
-      id: +exerciseId,
+      id: exerciseId,
     },
   })
   if (!exercise) {
@@ -15,11 +15,10 @@ export const createExerciseLog = asyncHandler(async (req, res) => {
   const timeDefault = []
   for (let i = 0; i < exercise.times; i++) {
     timeDefault.push({
-      weights: 0,
+      weight: 0,
       repeat: 0,
     })
   }
-  console.log(exercise)
   const exerciseLog = await prisma.exerciseLog.create({
     data: {
       user: {
@@ -29,7 +28,7 @@ export const createExerciseLog = asyncHandler(async (req, res) => {
       },
       exercise: {
         connect: {
-          id: +exerciseId,
+          id: exerciseId,
         },
       },
       times: {

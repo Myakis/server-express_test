@@ -8,14 +8,14 @@ export const getExercise = asyncHandler(async (req, res) => {
 
 export const createExercise = asyncHandler(async (req, res) => {
   const { name, times, iconPath } = req.body
-  const exercise = await prisma.exercise.create({ data: { name, times, iconPath } })
+  const exercise = await prisma.exercise.create({ data: { name, times: Number(times), iconPath } })
 
   res.json({ exercise })
 })
 
 export const updateExercise = asyncHandler(async (req, res) => {
   const { id, name, times, iconPath } = req.body
-  await prisma.exercise.update({ where: { id }, data: { name, times, iconPath } })
+  await prisma.exercise.update({ where: { id }, data: { name, times: Number(times), iconPath } })
   const exercises = await prisma.exercise.findMany()
 
   res.json({ items: exercises, message: `Упражнение с id ${id} успешно обновлено` })
@@ -23,8 +23,12 @@ export const updateExercise = asyncHandler(async (req, res) => {
 
 export const deleteExercise = asyncHandler(async (req, res) => {
   const { id } = req.params
-
-  await prisma.exercise.delete({ where: { id: Number(id) } })
-  const exercises = await prisma.exercise.findMany()
-  res.json({ items: exercises, message: `Упражнение с id ${id} успешно удалено` })
+  try {
+    await prisma.exercise.delete({ where: { id: Number(id) } })
+    const exercises = await prisma.exercise.findMany()
+    res.json({ items: exercises, message: `Упражнение с id ${id} успешно удалено` })
+  } catch (error) {
+    res.status(404)
+    throw new Error('Упражнение не найдено')
+  }
 })

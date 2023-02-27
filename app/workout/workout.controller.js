@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler'
 import { prisma } from '../../prisma.js'
 
 export const getWorkouts = asyncHandler(async (req, res) => {
-  console.log(req.user);
+  console.log(req.user)
   const workouts = await prisma.workout.findMany({
     orderBy: { createdAt: 'desc' },
     include: { exercises: true },
@@ -18,7 +18,7 @@ export const getWorkout = asyncHandler(async (req, res) => {
   })
   if (!workout) {
     res.status(404)
-    res.json({ message: 'Задания не существует' })
+    res.json({ message: 'Тренировки не существует' })
   }
   const minutes = Math.ceil(workout.exercises.length * 3.7)
   res.json({ ...workout, minutes })
@@ -42,26 +42,35 @@ export const createWorkout = asyncHandler(async (req, res) => {
 
 export const updateWorkout = asyncHandler(async (req, res) => {
   const { id, name, exerciseIds } = req.body
-  await prisma.workout.update({
-    where: { id },
-    data: {
-      name,
-      exercises: {
-        set: exerciseIds.map((id) => ({
-          id: +id,
-        })),
+  try {
+    await prisma.workout.update({
+      where: { id },
+      data: {
+        name,
+        exercises: {
+          set: exerciseIds.map((id) => ({
+            id: +id,
+          })),
+        },
       },
-    },
-  })
-  const workouts = await prisma.workout.findMany()
+    })
+    const workouts = await prisma.workout.findMany()
 
-  res.json({ items: workouts, message: `Упражнение с id ${id} успешно обновлено` })
+    res.json({ items: workouts, message: `Упражнение с id ${id} успешно обновлено` })
+  } catch (error) {
+    res.status(404)
+    throw new Error('Тренировки не существует')
+  }
 })
 
 export const deleteWorkout = asyncHandler(async (req, res) => {
   const { id } = req.params
-
-  const workout = await prisma.workout.delete({ where: { id: Number(id) } })
-  const workouts = await prisma.workout.findMany()
-  res.json({ items: workouts, message: `Упражнение с id ${id} успешно удалено` })
+  try {
+    await prisma.workout.delete({ where: { id: Number(id) } })
+    const workouts = await prisma.workout.findMany()
+    res.json({ items: workouts, message: `Упражнение с id ${id} успешно удалено` })
+  } catch (error) {
+    res.status(404)
+    throw new Error('Тренировки не существует')
+  }
 })
