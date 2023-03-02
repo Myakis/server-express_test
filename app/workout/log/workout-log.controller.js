@@ -9,10 +9,10 @@ export const createWorkoutLog = asyncHandler(async (req, res) => {
       id: workoutId,
     },
     include: {
-      exercise: true,
+      exercises: true,
     },
   })
-
+  console.log('workout',workout);
   if (!workout) {
     res.status(404)
     throw new Error('Тренировка не найдена')
@@ -36,20 +36,25 @@ export const createWorkoutLog = asyncHandler(async (req, res) => {
           id: workoutId,
         },
       },
-      exerciseLog: {
-        createMany: workout.exercises.map((exercise) => ({
+      exerciseLogs: {
+        create: workout.exercises.map((exercise) => ({
           exercise: {
             connect: {
               id: exercise.id,
             },
           },
-          times: Array.from({ length: exercise.length }, () => ({ weight: 0, repeat: 0 })),
+          times: {
+            create: Array.from({ length: exercise.times }, () => ({ weight: 0, repeat: 0 })),
+          },
         })),
       },
-      
     },
     include: {
-      times: true,
+      exerciseLogs: {
+        include: {
+          times: true,
+        },
+      },
     },
   })
   res.json(workoutLog)

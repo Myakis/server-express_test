@@ -2,7 +2,6 @@ import asyncHandler from 'express-async-handler'
 import { prisma } from '../../prisma.js'
 
 export const getWorkouts = asyncHandler(async (req, res) => {
-  console.log(req.user)
   const workouts = await prisma.workout.findMany({
     orderBy: { createdAt: 'desc' },
     include: { exercises: true },
